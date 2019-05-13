@@ -4,6 +4,8 @@ const drawContext = drawCanvas.getContext("2d");
 const videoWidth = 600;
 const videoHeight = 500;
 
+let prevX, prevY;
+
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
@@ -238,8 +240,19 @@ function detectPoseInRealTime(video, net) {
 
       let part = poses[0].keypoints[0];
 
-      drawContext.fillStyle = "#FF0000";
-      drawContext.fillRect(part.position.x, part.position.y, 10, 10);
+      drawContext.strokeStyle = "#FF0000";
+      drawContext.lineWidth = 3;
+
+      drawContext.beginPath();
+      drawContext.moveTo(prevX, prevY);
+      drawContext.lineTo(part.position.x, part.position.y);
+      drawContext.stroke();
+
+      prevX = part.position.x;
+      prevY = part.position.y;
+
+      // drawContext.fillStyle = "#FF0000";
+      // drawContext.fillRect(part.position.x, part.position.y, 10, 10);
     } 
 
 

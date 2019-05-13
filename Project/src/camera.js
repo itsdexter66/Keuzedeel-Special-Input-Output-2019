@@ -320,6 +320,10 @@ export async function bindPage() {
   detectPoseInRealTime(video, net);
 }
 
+document.getElementById("clearBtn").addEventListener('click', () => {
+  drawContext.clearRect(0, 0, videoWidth, videoHeight);
+});
+
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 // kick off the demo

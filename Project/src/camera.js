@@ -1,10 +1,12 @@
-const drawCanvas = document.getElementById("canvas-draw");
-const drawContext = drawCanvas.getContext("2d");
+import { loadScript, loadGame } from './loadscript.js';
 
-const videoWidth = 600;
-const videoHeight = 500;
+const canvas = document.getElementById('output');
+export const ctx = canvas.getContext('2d');
 
-let prevX, prevY;
+export const videoWidth = 600;
+export const videoHeight = 500;
+
+export let loaded = false;
 
 function isAndroid() {
   return /Android/i.test(navigator.userAgent);
@@ -19,6 +21,7 @@ function isMobile() {
 }
 
 export let poses = [];
+export let lastPoses = [];
 
 /**
  * Loads a the camera to be used in the demo
@@ -95,7 +98,7 @@ function setupGui(cameras, net) {
     guiState.camera = cameras[0].deviceId;
   }
 
-  const gui = new dat.GUI({width: 300});
+  const gui = new dat.GUI({width: 300, resizable: false});
 
   // The single-pose algorithm is faster and simpler but requires only one
   // person to be in the frame or results will be innaccurate. Multi-pose works
@@ -166,6 +169,8 @@ function setupGui(cameras, net) {
         break;
     }
   });
+
+  gui.hide();
 }
 
 /**
@@ -181,8 +186,7 @@ function setupGui(cameras, net) {
  * happens. This function loops with a requestAnimationFrame method.
  */
 function detectPoseInRealTime(video, net) {
-  const canvas = document.getElementById('output');
-  const ctx = canvas.getContext('2d');
+  loaded = true;
   // since images are being fed from a webcam
   const flipHorizontal = true;
 
@@ -233,29 +237,6 @@ function detectPoseInRealTime(video, net) {
         break;
     }
 
-    //log output of poses when valid pose has been detected
-    //draw when detected
-    if(poses.length != 0 && poses[0].score > 0.01) {
-      console.log(poses, poses[0].score);
-
-      let part = poses[0].keypoints[0];
-
-      drawContext.strokeStyle = "#FF0000";
-      drawContext.lineWidth = 3;
-
-      drawContext.beginPath();
-      drawContext.moveTo(prevX, prevY);
-      drawContext.lineTo(part.position.x, part.position.y);
-      drawContext.stroke();
-
-      prevX = part.position.x;
-      prevY = part.position.y;
-
-      // drawContext.fillStyle = "#FF0000";
-      // drawContext.fillRect(part.position.x, part.position.y, 10, 10);
-    } 
-
-
     ctx.clearRect(0, 0, videoWidth, videoHeight);
 
     if (guiState.output.showVideo) {
@@ -271,6 +252,7 @@ function detectPoseInRealTime(video, net) {
     // scores
     poses.forEach(({score, keypoints}) => {
       if (score >= minPoseConfidence) {
+        lastPoses = poses;
         if (guiState.output.showPoints) {
           drawKeypoints(keypoints, minPartConfidence, ctx);
         }
@@ -317,31 +299,12 @@ export async function bindPage() {
 
   setupGui([], net);
   // setupFPS();
+  loadScript("games.js", () => { console.log("Games list loaded!"); } );
+  loadGame();
   detectPoseInRealTime(video, net);
 }
-
-document.getElementById("clearBtn").addEventListener('click', () => {
-  drawContext.clearRect(0, 0, videoWidth, videoHeight);
-});
 
 navigator.getUserMedia = navigator.getUserMedia ||
     navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 // kick off the demo
 bindPage();
-
-/**
- * @license
- * Copyright 2018 Google Inc. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * =============================================================================
- */

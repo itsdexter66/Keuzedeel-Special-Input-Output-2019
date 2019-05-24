@@ -1,0 +1,17 @@
+{
+  "name": "camera-app",
+  "version": "1.0.0",
+  "description": "Camera app for special i/o",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Alex Janson",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^5.0.2"
+  },
+  "devDependencies": {
+    "node-key-sender": "^1.0.11"
+  }
+}

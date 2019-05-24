@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Input test</title>
+    <base href="app://./" />
+    <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' app:; object-src 'self' app:;"> -->
+</head>
+<body>
+    <form>
+        <div>
+            <select id="poses">
+                <option disabled selected hidden>Select PosePoint</option>
+                <option value="0">Nose</option>
+                <option value="1">Left Eye</option>
+                <option value="2">Right Eye</option>
+                <option value="3">Left Ear</option>
+                <option value="4">Right Ear</option>
+                <option value="5">Left Shoulder</option>
+                <option value="6">Right Shoulder</option>
+                <option value="7">Left Elbow</option>
+                <option value="8">Right Elbow</option>
+                <option value="9">Left Wrist</option>
+                <option value="10">Right Wrist</option>
+                <option value="11">Left Hip</option>
+                <option value="12">Right Hip</option>
+                <option value="13">Left Knee</option>
+                <option value="14">Right Knee</option>
+                <option value="15">Left Ankle</option>
+                <option value="16">Right Ankle</option>
+            </select>
+            <label for="xMin">x start</label>
+            <input type="number" name="xMin" id="xMin">
+            <label for="xMax">x end</label>
+            <input type="number" name="xMax" id="xMax">
+            <label for="yMin">y start</label>
+            <input type="number" name="yMin" id="yMin">
+            <label for="yMax">y end</label>
+            <input type="number" name="yMax" id="yMax">
+            <label for="key">key to emit</label>
+            <input type="text" name="key" id="key">
+        </div>
+        <button type="submit">Add Input</button>
+    </form>
+
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+
+        const form = document.querySelector('form');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let dropdown = document.getElementById("poses");
+            pose = dropdown.options[dropdown.selectedIndex].value;
+
+            xMin = document.getElementById("xMin").value;
+            xMax = document.getElementById("xMax").value;
+            yMin = document.getElementById("yMin").value;
+            yMax = document.getElementById("yMax").value;
+            key = document.getElementById("key").value;
+
+            input = {
+                pose: dropdown.options[dropdown.selectedIndex].value,
+                xMin: document.getElementById("xMin").value,
+                xMax: document.getElementById("xMax").value,
+                yMin: document.getElementById("yMin").value,
+                yMax: document.getElementById("yMax").value,
+                key: document.getElementById("key").value
+            }
+
+            ipcRenderer.send('input:add', input);
+        });
+    </script>
+</body>
+
+</html>

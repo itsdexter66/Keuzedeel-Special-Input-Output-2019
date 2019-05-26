@@ -9,9 +9,8 @@
   "author": "Alex Janson",
   "license": "ISC",
   "dependencies": {
-    "electron": "^5.0.2"
+    "electron": "^5.0.2",
+    "python-shell": "^1.0.7"
   },
-  "devDependencies": {
-    "node-key-sender": "^1.0.11"
-  }
+  "devDependencies": {}
 }

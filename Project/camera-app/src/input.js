@@ -1,11 +1,7 @@
 import * as Camera from './camera.js';
-const ks = require('node-key-sender');
+const { PythonShell } = require('python-shell');
 
 const {videoWidth, videoHeight} = Camera;
-
-ks.setOption('globalDelayPressMillisec', 10);
-ks.setOption('globalDelayBetweenMillisec', 10);
-ks.setOption('startDelayMillisec', 10);
 
 //Use this to track certain points of the pose
 export const PosePoints = {
@@ -76,7 +72,15 @@ function checkInput() {
 }
 
 export function sendKey(key) {
-    ks.sendKey(key);
+    let options = {
+        scriptPath: __dirname+'/src/',
+        args: [key],
+    }
+
+    let test = new PythonShell('test.py', options);
+    test.on('message', (message) => {
+        console.log(message);
+    });
 }
 
 // createInput(PosePoints.NOSE, 0, videoWidth/3, videoHeight/3, videoHeight/3 + videoHeight/3, () => { ks.sendKey("left"); });

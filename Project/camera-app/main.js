@@ -45,7 +45,8 @@ let createProtocol = (scheme, normalize = true) => {
     );
 }
     
-let mainWindow, inputWindow;
+let mainWindow, inputWindow, selectWindow;
+let pos;
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
@@ -84,20 +85,53 @@ function createInputWindow() {
     // inputWindow.setMenu(null);
 }
 
+function createSelectWindow() {
+    selectWindow = new BrowserWindow({width:300,height:300,title:'Select Pose and Key',webPreferences:{nodeIntegration:true}});
+    // selectWindow.webContents.openDevTools();
+    selectWindow.loadURL(url.format({
+        pathname: path.join(__dirname, "/src/select.html"),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    selectWindow.on('close', () => {
+        pos = null;
+        selectWindow = null;
+    });
+
+    // selectWindow.setMenu(null);
+}
+
 ipcMain.on('input:add', (e, input) => {
-    console.log(input);
     mainWindow.webContents.send('input:add', input);
     inputWindow.close();
 });
 
+ipcMain.on('main:draw', (e, positions) => {
+    pos = positions;
+    createSelectWindow();
+});
+
+ipcMain.on('select:create', (e, input) => {
+    mainWindow.webContents.send('select:create', input, pos);
+    selectWindow.close();
+});
+
 const mainMenuTemplate = [
     {
-        label: 'File',
+        label: 'Tools',
         submenu:[
             {
                 label: 'Add Input',
-                click(){
+                click() {
                     createInputWindow();
+                }
+            },
+            {
+                label: 'Toggle Draw',
+                accelerator: process.platform == 'darwin' ? 'Command+D' : 'Ctrl+D',
+                click() {
+                    mainWindow.webContents.send('info', {msg: 'Hello from main process'});
                 }
             }
         ]

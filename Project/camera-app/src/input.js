@@ -1,7 +1,6 @@
 import * as Camera from './camera.js';
 const { PythonShell } = require('python-shell');
-
-const {videoWidth, videoHeight} = Camera;
+const { ipcRenderer } = require('electron');
 
 //Use this to track certain points of the pose
 export const PosePoints = {
@@ -83,10 +82,10 @@ export function sendKey(key) {
     });
 }
 
-// createInput(PosePoints.NOSE, 0, videoWidth/3, videoHeight/3, videoHeight/3 + videoHeight/3, () => { ks.sendKey("left"); });
-// createInput(PosePoints.NOSE, videoWidth/3 + videoWidth/3, videoWidth, videoHeight/3, videoHeight/3 + videoHeight/3, () => { ks.sendKey("right"); });
-// createInput(PosePoints.NOSE, videoWidth/3, videoWidth/3 + videoWidth/3, videoHeight/3 + videoHeight/3, videoHeight, () => { ks.sendKey("down"); });
-// createInput(PosePoints.NOSE, (videoWidth/3)/2, (videoWidth/3)/2 + videoWidth/3, 0, videoHeight/3, () => { ks.sendKey("q"); });
-// createInput(PosePoints.NOSE, videoWidth/2, videoWidth/3 + videoWidth/3 + (videoWidth/3)/2, 0, videoHeight/3, () => { ks.sendKey("w"); });
+ipcRenderer.on('select:create', (e, select, positions) => {
+    createInput(select.pose, positions.xStart, positions.xEnd, positions.yStart, positions.yEnd, () => {
+        sendKey(select.key);
+    });
+});
 
 checkInput();

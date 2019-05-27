@@ -1,4 +1,4 @@
-const canvas = document.getElementById('output');
+export const canvas = document.getElementById('output');
 export const ctx = canvas.getContext('2d');
 
 export const videoWidth = 600;

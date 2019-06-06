@@ -64,6 +64,7 @@ app.on('ready', () => {
         app.quit();
     });
 
+    
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
 });
@@ -94,6 +95,7 @@ ipcMain.on('main:addinput', (e, input) => {
 });
 
 const mainMenuTemplate = [
+    
     {
         label: 'Tools',
         submenu:[

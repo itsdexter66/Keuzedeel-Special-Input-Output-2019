@@ -64,6 +64,7 @@ app.on('ready', () => {
         app.quit();
     });
 
+    
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
 });
@@ -85,12 +86,13 @@ function createInputWindow() {
 }
 
 ipcMain.on('input:add', (e, input) => {
-    console.log(input);
+    //console.log(input);
     mainWindow.webContents.send('input:add', input);
     inputWindow.close();
 });
 
 const mainMenuTemplate = [
+    
     {
         label: 'File',
         submenu:[

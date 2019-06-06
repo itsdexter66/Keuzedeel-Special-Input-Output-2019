@@ -27,6 +27,12 @@
         <canvas id="output" style="z-index: -1;" />
     </div>
 
+    <div id="drawOptions" style="display: none">
+        <select id="poses"></select>
+        <input type="text" name="key" id="poseKey" maxlength="1">
+        <h2 id="errorText" class="error"></h2>
+    </div>
+
     <script type="module" src="src/input.js"></script>
     <script type="module" src="src/camera.js"></script>
     <script type="module" src="src/catchEvents.js"></script>

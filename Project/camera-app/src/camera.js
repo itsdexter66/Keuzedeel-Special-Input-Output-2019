@@ -168,7 +168,7 @@ function setupGui(cameras, net) {
     }
   });
 
-  // gui.hide();
+  gui.hide();
 }
 
 /**

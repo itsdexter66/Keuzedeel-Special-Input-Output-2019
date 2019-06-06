@@ -28,10 +28,11 @@ class InputBox {
 
         this.inside = false;
         this.color = "red";
+        this.selected = false;
     }
 
     draw(ctx) {
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = this.selected ? 'purple' : this.color;
         ctx.strokeRect(this.xMin, this.yMin, this.xMax - this.xMin, this.yMax - this.yMin);
         ctx.stroke();
     }
@@ -82,9 +83,9 @@ export function sendKey(key) {
     });
 }
 
-ipcRenderer.on('select:create', (e, select, positions) => {
-    createInput(select.pose, positions.xStart, positions.xEnd, positions.yStart, positions.yEnd, () => {
-        sendKey(select.key);
+ipcRenderer.on('main:addinput', (e, input) => {
+    createInput(input.pose, input.xStart, input.xEnd, input.yStart, input.yEnd, () => {
+        sendKey(input.key);
     });
 });
 

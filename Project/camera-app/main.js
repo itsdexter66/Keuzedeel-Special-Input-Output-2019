@@ -1,12 +1,12 @@
 const electron = require('electron');
-let fs = require("fs");
+const fs = require("fs");
 const url = require('url');
 const path = require('path');
 
-const {app, protocol, BrowserWindow, Menu, ipcMain} = electron;
-const {readFile} = fs;
-const {URL} = url;
-const {extname} = path;
+const { app, protocol, BrowserWindow, Menu, ipcMain } = electron;
+const { readFile } = fs;
+const { URL } = url;
+const { extname } = path;
 
 let createProtocol = (scheme, normalize = true) => {
     protocol.registerBufferProtocol(scheme,
@@ -45,15 +45,14 @@ let createProtocol = (scheme, normalize = true) => {
     );
 }
     
-let mainWindow, inputWindow, selectWindow;
-let pos;
+let mainWindow, inputWindow;
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
 app.on('ready', () => {
     createProtocol('app');
 
-    mainWindow = new BrowserWindow({width:616,height:558,webPreferences:{nodeIntegration:true}});
+    mainWindow = new BrowserWindow({width:616,height:658,webPreferences:{nodeIntegration:true}});
     // mainWindow.webContents.openDevTools();
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, "/index.html"),
@@ -85,36 +84,13 @@ function createInputWindow() {
     // inputWindow.setMenu(null);
 }
 
-function createSelectWindow() {
-    selectWindow = new BrowserWindow({width:300,height:300,title:'Select Pose and Key',webPreferences:{nodeIntegration:true}});
-    // selectWindow.webContents.openDevTools();
-    selectWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "/src/select.html"),
-        protocol: 'file:',
-        slashes: true
-    }));
-
-    selectWindow.on('close', () => {
-        pos = null;
-        selectWindow = null;
-    });
-
-    // selectWindow.setMenu(null);
-}
-
 ipcMain.on('input:add', (e, input) => {
     mainWindow.webContents.send('input:add', input);
     inputWindow.close();
 });
 
-ipcMain.on('main:draw', (e, positions) => {
-    pos = positions;
-    createSelectWindow();
-});
-
-ipcMain.on('select:create', (e, input) => {
-    mainWindow.webContents.send('select:create', input, pos);
-    selectWindow.close();
+ipcMain.on('main:addinput', (e, input) => {
+    mainWindow.webContents.send('main:addinput', input);
 });
 
 const mainMenuTemplate = [
@@ -131,12 +107,12 @@ const mainMenuTemplate = [
                 label: 'Toggle Draw',
                 accelerator: process.platform == 'darwin' ? 'Command+D' : 'Ctrl+D',
                 click() {
-                    mainWindow.webContents.send('info', {msg: 'Hello from main process'});
+                    mainWindow.webContents.send('main:draw');
                 }
             }
         ]
     }
-]
+];
 
 // Only for mac
 if(process.platform == 'darwin') {

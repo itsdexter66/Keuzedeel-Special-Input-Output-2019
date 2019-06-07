@@ -64,6 +64,7 @@ app.on('ready', () => {
         app.quit();
     });
 
+    //mainMenuTemplate.splice(0, 1);
     
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
     Menu.setApplicationMenu(mainMenu);
@@ -95,7 +96,6 @@ ipcMain.on('main:addinput', (e, input) => {
 });
 
 const mainMenuTemplate = [
-    
     {
         label: 'Tools',
         submenu:[
@@ -118,7 +118,7 @@ const mainMenuTemplate = [
 
 // Only for mac
 if(process.platform == 'darwin') {
-    mainMenuTemplate.unshift({});
+    mainMenuTemplate.unshift({label:'Electron'});
 }
 
 // Developer tools if in not in release mode
